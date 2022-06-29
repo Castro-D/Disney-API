@@ -1,0 +1,27 @@
+{
+  "name": "disney-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Castro-D/Disney-API.git"
+  },
+  "author": "Diego Castro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Castro-D/Disney-API/issues"
+  },
+  "homepage": "https://github.com/Castro-D/Disney-API#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.18"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "sequelize": "^6.21.2",
+    "sqlite3": "^5.0.8"
+  }
+}
