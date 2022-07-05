@@ -6,14 +6,18 @@ const PeliculaPersonaje = require('../../peliculaPersonaje');
 module.exports = {
   async up(queryInterface, Sequelize) {
     return Promise.all([
+      Genero.setup(queryInterface.sequelize),
       Pelicula.setup(queryInterface.sequelize),
       Personaje.setup(queryInterface.sequelize),
-      Genero.setup(queryInterface.sequelize),
       PeliculaPersonaje.setup(queryInterface.sequelize),
 
+      Pelicula.setupAssociation(Personaje),
+      Personaje.setupAssociation(Pelicula),
+      Genero.setupAssociation(Pelicula),
+
+      Genero.sync(),
       Pelicula.sync(),
       Personaje.sync(),
-      Genero.sync(),
       PeliculaPersonaje.sync(),
     ]);
   },

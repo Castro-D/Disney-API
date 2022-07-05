@@ -43,8 +43,8 @@ module.exports = class Personaje extends Model {
   static setupAssociation(Pelicula) {
     Personaje.belongsToMany(Pelicula, {
       through: 'peliculas_personajes',
-      as: 'personajes',
-      foreignKey: 'fk_pelicula',
+      as: 'peliculas',
+      foreignKey: 'fk_personaje',
       uniqueKey: 'id',
     });
     return Personaje;

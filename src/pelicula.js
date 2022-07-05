@@ -29,6 +29,13 @@ module.exports = class Pelicula extends Model {
           max: 5,
         },
       },
+      fk_genero: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: { tableName: 'generos' },
+          key: 'id',
+        },
+      },
     }, {
       sequelize: sequelizeInstance,
       underscored: true,
@@ -47,6 +54,7 @@ module.exports = class Pelicula extends Model {
       foreignKey: 'fk_pelicula',
       uniqueKey: 'id',
     });
+
     return Pelicula;
   }
 };
