@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:express": "nodemon ./src/index.js"
+    "dev:express": "nodemon ./src/index.js",
+    "migrations": "sequelize-cli db:migrate --config=./src/cli/config.js --migrations-path=./src/cli/migrations --env=development"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,10 @@
     "sequelize-cli": "^6.4.1"
   },
   "dependencies": {
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.21.2",
     "sqlite3": "^5.0.8"
   }
