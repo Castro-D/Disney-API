@@ -15,7 +15,7 @@ module.exports = class PeliculaPersonaje extends Model {
       },
 
       fk_personaje: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
     }, {
