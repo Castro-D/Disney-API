@@ -67,6 +67,20 @@ app.post('/characters', async (req, res) => {
   res.status(200).json(newPersonaje.toJSON());
 });
 
+app.put('/characters/:id', async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  const personaje = await Personaje.findByPk(id);
+  await personaje.update(data);
+  res.status(200).json(personaje.toJSON());
+});
+
+app.delete('/characters/:id', async (req, res) => {
+  const { id } = req.params;
+  await Personaje.destroy({ where: { id } });
+  res.status(200).json({ deleted: 'true' });
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
