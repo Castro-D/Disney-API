@@ -27,10 +27,40 @@ Genero.setupAssociation(Pelicula);
 app.use(express.json());
 
 app.get('/characters', async (req, res) => {
+  if (req.query) {
+    const {
+      nombre, edad, peliculas, peso,
+    } = req.query;
+    const query = {};
+    if (peliculas != null) {
+      const personajes = await Pelicula.findOne({
+        where: {
+          titulo: peliculas,
+        },
+        attributes: {
+          exclude: ['id', 'imagen', 'titulo', 'fechaCreacion', 'calificacion', 'fk_genero', 'created_at', 'updated_at'],
+        },
+        include: {
+          model: Personaje,
+          as: 'personajes',
+          through: 'peliculas_personajes',
+        },
+
+      });
+      return res.json(personajes);
+    }
+    if (nombre != null) query.nombre = nombre;
+    if (edad != null) query.edad = edad;
+    if (peso != null) query.peso = peso;
+    const result = await Personaje.findAll({
+      where: query,
+    });
+    return res.json(result);
+  }
   const personajes = await Personaje.findAll({
     attributes: ['imagen', 'nombre'],
   });
-  res.status(200).json(personajes);
+  return res.status(200).json(personajes);
 });
 
 app.get('/characters/:id', async (req, res) => {
