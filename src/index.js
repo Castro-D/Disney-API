@@ -111,6 +111,46 @@ app.delete('/characters/:id', async (req, res) => {
   res.status(200).json({ deleted: 'true' });
 });
 
+app.get('/movies', async (req, res) => {
+  const peliculas = await Pelicula.findAll({
+    attributes: ['imagen', 'titulo', 'fechaCreacion'],
+  });
+  res.json(peliculas);
+});
+
+app.get('/movies/:id', async (req, res) => {
+  const { id } = req.params;
+  const pelicula = await Pelicula.findByPk(id, {
+    include: {
+      model: Personaje,
+      as: 'personajes',
+      through: 'peliculas_personajes',
+    },
+  });
+  res.json({ pelicula });
+});
+
+app.post('/movies', async (req, res) => {
+  const data = req.body;
+  const pelicula = Pelicula.build(data);
+  await pelicula.save();
+  res.json(pelicula.toJSON());
+});
+
+app.put('/movies/:id', async (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+  const pelicula = await Pelicula.findByPk(id);
+  await pelicula.update(changes);
+  res.json(pelicula.toJSON());
+});
+
+app.delete('/movies/:id', async (req, res) => {
+  const { id } = req.params;
+  await Pelicula.destroy({ where: { id } });
+  res.json({ msg: 'deleted' });
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
