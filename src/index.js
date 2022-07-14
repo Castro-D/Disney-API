@@ -112,10 +112,33 @@ app.delete('/characters/:id', async (req, res) => {
 });
 
 app.get('/movies', async (req, res) => {
+  if (req.query.name) {
+    const titulo = req.query.name;
+    const pelicula = await Pelicula.findOne({
+      where: {
+        titulo,
+      },
+    });
+    return res.json(pelicula.toJSON());
+  } if (req.query.genre) {
+    const { genre } = req.query;
+    const pelicula = await Pelicula.findAll({
+      where: {
+        fk_genero: genre,
+      },
+    });
+    return res.json(pelicula);
+  } if (req.query.order) {
+    const { order } = req.query;
+    const peliculas = await Pelicula.findAll({
+      order: [['fecha_creacion', order]],
+    });
+    return res.json(peliculas);
+  }
   const peliculas = await Pelicula.findAll({
     attributes: ['imagen', 'titulo', 'fechaCreacion'],
   });
-  res.json(peliculas);
+  return res.json(peliculas);
 });
 
 app.get('/movies/:id', async (req, res) => {
