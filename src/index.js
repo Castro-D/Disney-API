@@ -3,10 +3,13 @@ const express = require('express');
 const {
   Sequelize, DataTypes, Model,
 } = require('sequelize');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const Pelicula = require('./pelicula');
 const Personaje = require('./personaje');
 const Genero = require('./genero');
 const PeliculaPersonaje = require('./peliculaPersonaje');
+const Usuario = require('./usuario');
 
 const app = express();
 const port = 3000;
@@ -15,10 +18,19 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
 });
 
+const getTokenFrom = (req) => {
+  const auth = req.get('authorization');
+  if (auth && auth.toLowerCase().startsWith('bearer ')) {
+    return auth.substring(7);
+  }
+  return null;
+};
+
 Pelicula.setup(sequelize);
 Personaje.setup(sequelize);
 Genero.setup(sequelize);
 PeliculaPersonaje.setup(sequelize);
+Usuario.setup(sequelize);
 
 Pelicula.setupAssociation(Personaje);
 Personaje.setupAssociation(Pelicula);
@@ -27,6 +39,11 @@ Genero.setupAssociation(Pelicula);
 app.use(express.json());
 
 app.get('/characters', async (req, res) => {
+  const token = getTokenFrom(req);
+  // const decodedToken = jwt.verify(token, process.env.SECRET);
+  if (!token) {
+    return res.status(401).json({ error: 'token missing or invalid' });
+  }
   if (req.query) {
     const {
       nombre, edad, peliculas, peso,
@@ -172,6 +189,51 @@ app.delete('/movies/:id', async (req, res) => {
   const { id } = req.params;
   await Pelicula.destroy({ where: { id } });
   res.json({ msg: 'deleted' });
+});
+
+app.post('/auth/register', async (req, res) => {
+  const { username, password } = req.body;
+  const existingUser = await Usuario.findOne({
+    where: {
+      username,
+    },
+  });
+  if (existingUser) {
+    return res.status(400).json({
+      error: 'username must be unique',
+    });
+  }
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(password, saltRounds);
+  const user = Usuario.build({
+    username,
+    passwordHash,
+  });
+  const savedUser = await user.save();
+  return res.status(201).json(savedUser);
+});
+
+app.post('/auth/login', async (req, res) => {
+  const { username, password } = req.body;
+  const user = await Usuario.findOne({
+    where: {
+      username,
+    },
+  });
+  const passwordCorrect = user === null
+    ? false
+    : await bcrypt.compare(password, user.passwordHash);
+  if (!(user && passwordCorrect)) {
+    return res.status(401).json({
+      error: 'invalid username',
+    });
+  }
+  const userForToken = {
+    username: user.username,
+    id: user.id,
+  };
+  const token = jwt.sign(userForToken, process.env.SECRET);
+  return res.status(200).send({ token, username });
 });
 
 app.listen(port, () => {
