@@ -40,9 +40,16 @@ app.use(express.json());
 
 app.get('/characters', async (req, res) => {
   const token = getTokenFrom(req);
-  // const decodedToken = jwt.verify(token, process.env.SECRET);
+
   if (!token) {
     return res.status(401).json({ error: 'token missing or invalid' });
+  }
+
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return res.status(401).json({
+      error: 'token missing or invalid',
+    });
   }
   if (req.query) {
     const {
@@ -232,7 +239,7 @@ app.post('/auth/login', async (req, res) => {
     username: user.username,
     id: user.id,
   };
-  const token = jwt.sign(userForToken, process.env.SECRET);
+  const token = jwt.sign(userForToken, process.env.SECRET, { expiresIn: 60 * 60 });
   return res.status(200).send({ token, username });
 });
 
