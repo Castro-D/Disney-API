@@ -38,6 +38,34 @@ Genero.setupAssociation(Pelicula);
 
 app.use(express.json());
 
+// ============= repository functions ===============
+async function getAll() {
+  const personajes = await Personaje.findAll({
+    attributes: ['id', 'imagen', 'nombre'],
+  });
+  return personajes;
+}
+
+async function getFilteredCharacters(query, pelicula = null) {
+  if (pelicula != null) {
+    const personajes = await Personaje.findAll({
+      include: {
+        model: Pelicula,
+        as: 'peliculas',
+        through: 'peliculas_personajes',
+        where: {
+          id: pelicula,
+        },
+      },
+    });
+    return personajes;
+  }
+  const result = await Personaje.findAll({
+    where: query,
+  });
+  return result;
+}
+
 app.get('/characters', async (req, res) => {
   const token = getTokenFrom(req);
 
@@ -51,39 +79,19 @@ app.get('/characters', async (req, res) => {
       error: 'token missing or invalid',
     });
   }
-  if (req.query) {
+  const queryObjectIsEmpty = Object.keys(req.query).length === 0;
+  if (!queryObjectIsEmpty) {
     const {
       nombre, edad, peliculas, peso,
     } = req.query;
     const query = {};
-    if (peliculas != null) {
-      const personajes = await Pelicula.findOne({
-        where: {
-          titulo: peliculas,
-        },
-        attributes: {
-          exclude: ['id', 'imagen', 'titulo', 'fechaCreacion', 'calificacion', 'fk_genero', 'created_at', 'updated_at'],
-        },
-        include: {
-          model: Personaje,
-          as: 'personajes',
-          through: 'peliculas_personajes',
-        },
-
-      });
-      return res.json(personajes);
-    }
     if (nombre != null) query.nombre = nombre;
     if (edad != null) query.edad = edad;
     if (peso != null) query.peso = peso;
-    const result = await Personaje.findAll({
-      where: query,
-    });
-    return res.json(result);
+    const personajesAsociados = await getFilteredCharacters(query, peliculas);
+    return res.json(personajesAsociados);
   }
-  const personajes = await Personaje.findAll({
-    attributes: ['imagen', 'nombre'],
-  });
+  const personajes = await getAll();
   return res.status(200).json(personajes);
 });
 
