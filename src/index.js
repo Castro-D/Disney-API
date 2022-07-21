@@ -38,7 +38,7 @@ Genero.setupAssociation(Pelicula);
 
 app.use(express.json());
 
-// ============= repository functions ===============
+// ============= repository Personaje functions ===============
 async function getAll() {
   const personajes = await Personaje.findAll({
     attributes: ['id', 'imagen', 'nombre'],
@@ -64,6 +64,47 @@ async function getFilteredCharacters(query, pelicula = null) {
     where: query,
   });
   return result;
+}
+
+async function getCharacterById(id) {
+  const personaje = await Personaje.findByPk(id, {
+    include: {
+      model: Pelicula,
+      as: 'peliculas',
+      through: 'peliculas_personajes',
+    },
+  });
+  return personaje;
+}
+
+async function save(data) {
+  const buildOptions = {
+    isNewRecord: !data.id,
+  };
+  let personajeModel;
+
+  personajeModel = Personaje.build(data, buildOptions);
+  personajeModel = await personajeModel.save();
+  return personajeModel;
+}
+
+async function saveCharactersMovies(peliculas, personaje) {
+  peliculas.forEach(async (p) => {
+    const pelicula = await Pelicula.findOne({
+      where: {
+        titulo: p,
+      },
+    });
+    const peliculaPersonaje = PeliculaPersonaje.build({
+      fk_pelicula: pelicula.id,
+      fk_personaje: personaje.id,
+    });
+    await peliculaPersonaje.save();
+  });
+}
+
+async function removeCharacter(id) {
+  await Personaje.destroy({ where: { id } });
 }
 
 app.get('/characters', async (req, res) => {
@@ -97,49 +138,31 @@ app.get('/characters', async (req, res) => {
 
 app.get('/characters/:id', async (req, res) => {
   const { id } = req.params;
-  const personaje = await Personaje.findByPk(id, {
-    include: {
-      model: Pelicula,
-      as: 'peliculas',
-      through: 'peliculas_personajes',
-    },
-  });
+  const personaje = await getCharacterById(id);
   res.status(200).json({ data: personaje });
 });
 
 app.post('/characters', async (req, res) => {
   const personaje = req.body;
   const { peliculas } = personaje;
-  const newPersonaje = Personaje.build(personaje);
-  await newPersonaje.save();
+  const newPersonaje = await save(personaje);
   if (peliculas) {
-    peliculas.forEach(async (p) => {
-      const pelicula = await Pelicula.findOne({
-        where: {
-          titulo: p.titulo,
-        },
-      });
-      const peliculaPersonaje = PeliculaPersonaje.build({
-        fk_pelicula: pelicula.id,
-        fk_personaje: newPersonaje.id,
-      });
-      await peliculaPersonaje.save();
-    });
+    saveCharactersMovies(peliculas, newPersonaje);
   }
   res.status(200).json(newPersonaje.toJSON());
 });
 
 app.put('/characters/:id', async (req, res) => {
   const { id } = req.params;
-  const data = req.body;
-  const personaje = await Personaje.findByPk(id);
-  await personaje.update(data);
-  res.status(200).json(personaje.toJSON());
+  const personaje = req.body;
+  personaje.id = id;
+  const savedPersonaje = await save(personaje);
+  res.status(200).json(savedPersonaje.toJSON());
 });
 
 app.delete('/characters/:id', async (req, res) => {
   const { id } = req.params;
-  await Personaje.destroy({ where: { id } });
+  await removeCharacter(id);
   res.status(200).json({ deleted: 'true' });
 });
 
