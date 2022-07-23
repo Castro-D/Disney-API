@@ -107,6 +107,58 @@ async function removeCharacter(id) {
   await Personaje.destroy({ where: { id } });
 }
 
+// ============= repository Pelicula functions ===============
+
+async function getAllMovies() {
+  const peliculas = await Pelicula.findAll({
+    attributes: ['imagen', 'titulo', 'fechaCreacion'],
+  });
+  return peliculas;
+}
+
+async function getFilteredMovies(query) {
+  const options = {
+    where: {},
+  };
+  if (query.name) {
+    options.where.titulo = query.name;
+  }
+  if (query.genre) {
+    options.where.fk_genero = query.genre;
+  }
+  if (query.order) {
+    options.order = [['fecha_creacion', query.order]];
+  }
+  const filteredMovies = await Pelicula.findAll(options);
+  return filteredMovies;
+}
+
+async function getMovieById(id) {
+  const pelicula = await Pelicula.findByPk(id, {
+    include: {
+      model: Personaje,
+      as: 'personajes',
+      through: 'peliculas_personajes',
+    },
+  });
+  return pelicula;
+}
+
+async function saveMovie(data) {
+  const buildOptions = {
+    isNewRecord: !data.id,
+  };
+  let peliculaModel;
+
+  peliculaModel = Pelicula.build(data, buildOptions);
+  peliculaModel = await peliculaModel.save();
+  return peliculaModel;
+}
+
+async function deleteMovie(id) {
+  await Pelicula.destroy({ where: { id } });
+}
+
 app.get('/characters', async (req, res) => {
   const token = getTokenFrom(req);
 
@@ -167,65 +219,39 @@ app.delete('/characters/:id', async (req, res) => {
 });
 
 app.get('/movies', async (req, res) => {
-  if (req.query.name) {
-    const titulo = req.query.name;
-    const pelicula = await Pelicula.findOne({
-      where: {
-        titulo,
-      },
-    });
-    return res.json(pelicula.toJSON());
-  } if (req.query.genre) {
-    const { genre } = req.query;
-    const pelicula = await Pelicula.findAll({
-      where: {
-        fk_genero: genre,
-      },
-    });
-    return res.json(pelicula);
-  } if (req.query.order) {
-    const { order } = req.query;
-    const peliculas = await Pelicula.findAll({
-      order: [['fecha_creacion', order]],
-    });
-    return res.json(peliculas);
+  const queryObjectIsEmpty = Object.keys(req.query).length === 0;
+  if (!queryObjectIsEmpty) {
+    const movies = await getFilteredMovies(req.query);
+    return res.json({ movies });
   }
-  const peliculas = await Pelicula.findAll({
-    attributes: ['imagen', 'titulo', 'fechaCreacion'],
-  });
+
+  const peliculas = await getAllMovies();
   return res.json(peliculas);
 });
 
 app.get('/movies/:id', async (req, res) => {
   const { id } = req.params;
-  const pelicula = await Pelicula.findByPk(id, {
-    include: {
-      model: Personaje,
-      as: 'personajes',
-      through: 'peliculas_personajes',
-    },
-  });
+  const pelicula = await getMovieById(id);
   res.json({ pelicula });
 });
 
 app.post('/movies', async (req, res) => {
   const data = req.body;
-  const pelicula = Pelicula.build(data);
-  await pelicula.save();
+  const pelicula = await saveMovie(data);
   res.json(pelicula.toJSON());
 });
 
 app.put('/movies/:id', async (req, res) => {
   const { id } = req.params;
-  const changes = req.body;
-  const pelicula = await Pelicula.findByPk(id);
-  await pelicula.update(changes);
-  res.json(pelicula.toJSON());
+  const pelicula = req.body;
+  pelicula.id = id;
+  const savedPelicula = await saveMovie(pelicula);
+  res.json(savedPelicula);
 });
 
 app.delete('/movies/:id', async (req, res) => {
   const { id } = req.params;
-  await Pelicula.destroy({ where: { id } });
+  await deleteMovie(id);
   res.json({ msg: 'deleted' });
 });
 
