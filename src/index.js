@@ -5,10 +5,10 @@ const {
 } = require('sequelize');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const Pelicula = require('./pelicula');
-const Personaje = require('./personaje');
+const Pelicula = require('./module/pelicula/model/pelicula');
+const Personaje = require('./module/personaje/model/personaje');
 const Genero = require('./genero');
-const PeliculaPersonaje = require('./peliculaPersonaje');
+const PeliculaPersonaje = require('./module/personaje/model/peliculaPersonaje');
 const Usuario = require('./usuario');
 
 const app = express();
@@ -37,75 +37,6 @@ Personaje.setupAssociation(Pelicula);
 Genero.setupAssociation(Pelicula);
 
 app.use(express.json());
-
-// ============= repository Personaje functions ===============
-async function getAll() {
-  const personajes = await Personaje.findAll({
-    attributes: ['id', 'imagen', 'nombre'],
-  });
-  return personajes;
-}
-
-async function getFilteredCharacters(query, pelicula = null) {
-  if (pelicula != null) {
-    const personajes = await Personaje.findAll({
-      include: {
-        model: Pelicula,
-        as: 'peliculas',
-        through: 'peliculas_personajes',
-        where: {
-          id: pelicula,
-        },
-      },
-    });
-    return personajes;
-  }
-  const result = await Personaje.findAll({
-    where: query,
-  });
-  return result;
-}
-
-async function getCharacterById(id) {
-  const personaje = await Personaje.findByPk(id, {
-    include: {
-      model: Pelicula,
-      as: 'peliculas',
-      through: 'peliculas_personajes',
-    },
-  });
-  return personaje;
-}
-
-async function save(data) {
-  const buildOptions = {
-    isNewRecord: !data.id,
-  };
-  let personajeModel;
-
-  personajeModel = Personaje.build(data, buildOptions);
-  personajeModel = await personajeModel.save();
-  return personajeModel;
-}
-
-async function saveCharactersMovies(peliculas, personaje) {
-  peliculas.forEach(async (p) => {
-    const pelicula = await Pelicula.findOne({
-      where: {
-        titulo: p,
-      },
-    });
-    const peliculaPersonaje = PeliculaPersonaje.build({
-      fk_pelicula: pelicula.id,
-      fk_personaje: personaje.id,
-    });
-    await peliculaPersonaje.save();
-  });
-}
-
-async function removeCharacter(id) {
-  await Personaje.destroy({ where: { id } });
-}
 
 // ============= repository Pelicula functions ===============
 
