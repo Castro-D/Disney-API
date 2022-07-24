@@ -1,4 +1,4 @@
-module.exports = class personajeService {
+module.exports = class PersonajeService {
   /**
    * @param {import('../repository/personajeRepository')} personajeRepository
    */
