@@ -103,42 +103,42 @@ initPersonajeModule(app, container);
 //   res.status(200).json({ deleted: 'true' });
 // });
 
-app.get('/movies', async (req, res) => {
-  const queryObjectIsEmpty = Object.keys(req.query).length === 0;
-  if (!queryObjectIsEmpty) {
-    const movies = await getFilteredMovies(req.query);
-    return res.json({ movies });
-  }
+// app.get('/movies', async (req, res) => {
+//   const queryObjectIsEmpty = Object.keys(req.query).length === 0;
+//   if (!queryObjectIsEmpty) {
+//     const movies = await getFilteredMovies(req.query);
+//     return res.json({ movies });
+//   }
 
-  const peliculas = await getAllMovies();
-  return res.json(peliculas);
-});
+//   const peliculas = await getAllMovies();
+//   return res.json(peliculas);
+// });
 
-app.get('/movies/:id', async (req, res) => {
-  const { id } = req.params;
-  const pelicula = await getMovieById(id);
-  res.json({ pelicula });
-});
+// app.get('/movies/:id', async (req, res) => {
+//   const { id } = req.params;
+//   const pelicula = await getMovieById(id);
+//   res.json({ pelicula });
+// });
 
-app.post('/movies', async (req, res) => {
-  const data = req.body;
-  const pelicula = await saveMovie(data);
-  res.json(pelicula.toJSON());
-});
+// app.post('/movies', async (req, res) => {
+//   const data = req.body;
+//   const pelicula = await saveMovie(data);
+//   res.json(pelicula.toJSON());
+// });
 
-app.put('/movies/:id', async (req, res) => {
-  const { id } = req.params;
-  const pelicula = req.body;
-  pelicula.id = id;
-  const savedPelicula = await saveMovie(pelicula);
-  res.json(savedPelicula);
-});
+// app.put('/movies/:id', async (req, res) => {
+//   const { id } = req.params;
+//   const pelicula = req.body;
+//   pelicula.id = id;
+//   const savedPelicula = await saveMovie(pelicula);
+//   res.json(savedPelicula);
+// });
 
-app.delete('/movies/:id', async (req, res) => {
-  const { id } = req.params;
-  await deleteMovie(id);
-  res.json({ msg: 'deleted' });
-});
+// app.delete('/movies/:id', async (req, res) => {
+//   const { id } = req.params;
+//   await deleteMovie(id);
+//   res.json({ msg: 'deleted' });
+// });
 
 app.post('/auth/register', async (req, res) => {
   const { username, password } = req.body;
