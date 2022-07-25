@@ -4,7 +4,10 @@ const PersonajeRepository = require('./repository/personajeRepository');
 const PersonajeModel = require('./model/personaje');
 const PeliculaPersonajeModel = require('./model/peliculaPersonaje');
 
-const PeliculaModel = require('../pelicula/model/pelicula');
+function initPersonajeModule(app, container) {
+  const controller = container.get('PersonajeController');
+  controller.configureRoutes(app);
+}
 
 module.exports = {
   PersonajeController,
@@ -12,5 +15,5 @@ module.exports = {
   PersonajeRepository,
   PersonajeModel,
   PeliculaPersonajeModel,
-  PeliculaModel,
+  initPersonajeModule,
 };

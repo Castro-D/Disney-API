@@ -55,7 +55,7 @@ module.exports = class PersonajeRepository {
     let personajeModel;
 
     personajeModel = this.personajeModel.build(data, buildOptions);
-    personajeModel = await this.personajeModel.save();
+    personajeModel = await personajeModel.save();
     return personajeModel;
   }
 

@@ -26,5 +26,6 @@ module.exports = class PeliculaPersonaje extends Model {
       updatedAt: 'updated_at',
       tableName: 'peliculas_personajes',
     });
+    return PeliculaPersonaje;
   }
 };

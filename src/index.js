@@ -8,15 +8,19 @@ const bcrypt = require('bcrypt');
 const Pelicula = require('./module/pelicula/model/pelicula');
 const Personaje = require('./module/personaje/model/personaje');
 const Genero = require('./genero');
-const PeliculaPersonaje = require('./module/personaje/model/peliculaPersonaje');
+// const PeliculaPersonaje = require('./module/personaje/model/peliculaPersonaje');
 const Usuario = require('./usuario');
 
 const app = express();
-const port = 3000;
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: 'postgres',
-});
+const configureDI = require('./config/di');
+const { initPersonajeModule } = require('./module/personaje/module');
+
+const port = process.env.PORT || 8000;
+
+// const sequelize = new Sequelize(process.env.DATABASE_URL, {
+//   dialect: 'postgres',
+// });
 
 const getTokenFrom = (req) => {
   const auth = req.get('authorization');
@@ -26,18 +30,19 @@ const getTokenFrom = (req) => {
   return null;
 };
 
-Pelicula.setup(sequelize);
-Personaje.setup(sequelize);
-Genero.setup(sequelize);
-PeliculaPersonaje.setup(sequelize);
-Usuario.setup(sequelize);
+// Pelicula.setup(sequelize);
+// Personaje.setup(sequelize);
+// Genero.setup(sequelize);
+// PeliculaPersonaje.setup(sequelize);
+// Usuario.setup(sequelize);
 
-Pelicula.setupAssociation(Personaje);
-Personaje.setupAssociation(Pelicula);
-Genero.setupAssociation(Pelicula);
+// Pelicula.setupAssociation(Personaje);
+// Personaje.setupAssociation(Pelicula);
+// Genero.setupAssociation(Pelicula);
 
 app.use(express.json());
-
+const container = configureDI();
+initPersonajeModule(app, container);
 // ============= repository Pelicula functions ===============
 
 async function getAllMovies() {

@@ -11,7 +11,6 @@ const {
   PersonajeRepository,
   PersonajeModel,
   PeliculaPersonajeModel,
-  PeliculaModel,
 } = require('../module/personaje/module');
 
 function configureSequelizeDatabase() {
@@ -40,8 +39,8 @@ function configurePeliculaModel(container) {
 
 function addPersonajeModuleDefinitions(container) {
   container.add({
-    PersonajeController: object(PersonajeController).construct(use(PersonajeService)),
-    PersonajeService: object(PersonajeService).construct(use(PersonajeRepository)),
+    PersonajeController: object(PersonajeController).construct(use('PersonajeService')),
+    PersonajeService: object(PersonajeService).construct(use('PersonajeRepository')),
     PersonajeRepository: object(PersonajeRepository).construct(
       use('PersonajeModel'),
       use('PeliculaModel'),
@@ -49,12 +48,11 @@ function addPersonajeModuleDefinitions(container) {
     ),
     PersonajeModel: factory(configurePersonajeModel),
     PeliculaPersonajeModel: factory(configurePeliculaPersonajeModel),
-    PeliculaModel: factory(configurePeliculaModel),
   });
 }
 
 function setupAssociations(container) {
-  const personajeModel = container.get('ProductModel');
+  const personajeModel = container.get('PersonajeModel');
   const peliculaModel = container.get('PeliculaModel');
 
   personajeModel.setupAssociation(peliculaModel);
