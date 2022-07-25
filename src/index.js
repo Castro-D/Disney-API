@@ -2,8 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const Pelicula = require('./module/pelicula/model/pelicula');
-const Personaje = require('./module/personaje/model/personaje');
 const Genero = require('./genero');
 const Usuario = require('./usuario');
 
@@ -23,14 +21,9 @@ const getTokenFrom = (req) => {
   return null;
 };
 
-// Pelicula.setup(sequelize);
-// Personaje.setup(sequelize);
 // Genero.setup(sequelize);
-// PeliculaPersonaje.setup(sequelize);
 // Usuario.setup(sequelize);
 
-// Pelicula.setupAssociation(Personaje);
-// Personaje.setupAssociation(Pelicula);
 // Genero.setupAssociation(Pelicula);
 
 app.use(express.json());
@@ -65,73 +58,6 @@ initPeliculaModule(app, container);
 //   }
 //   const personajes = await getAll();
 //   return res.status(200).json(personajes);
-// });
-
-// app.get('/characters/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const personaje = await getCharacterById(id);
-//   res.status(200).json({ data: personaje });
-// });
-
-// app.post('/characters', async (req, res) => {
-//   const personaje = req.body;
-//   const { peliculas } = personaje;
-//   const newPersonaje = await save(personaje);
-//   if (peliculas) {
-//     saveCharactersMovies(peliculas, newPersonaje);
-//   }
-//   res.status(200).json(newPersonaje.toJSON());
-// });
-
-// app.put('/characters/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const personaje = req.body;
-//   personaje.id = id;
-//   const savedPersonaje = await save(personaje);
-//   res.status(200).json(savedPersonaje.toJSON());
-// });
-
-// app.delete('/characters/:id', async (req, res) => {
-//   const { id } = req.params;
-//   await removeCharacter(id);
-//   res.status(200).json({ deleted: 'true' });
-// });
-
-// app.get('/movies', async (req, res) => {
-//   const queryObjectIsEmpty = Object.keys(req.query).length === 0;
-//   if (!queryObjectIsEmpty) {
-//     const movies = await getFilteredMovies(req.query);
-//     return res.json({ movies });
-//   }
-
-//   const peliculas = await getAllMovies();
-//   return res.json(peliculas);
-// });
-
-// app.get('/movies/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const pelicula = await getMovieById(id);
-//   res.json({ pelicula });
-// });
-
-// app.post('/movies', async (req, res) => {
-//   const data = req.body;
-//   const pelicula = await saveMovie(data);
-//   res.json(pelicula.toJSON());
-// });
-
-// app.put('/movies/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const pelicula = req.body;
-//   pelicula.id = id;
-//   const savedPelicula = await saveMovie(pelicula);
-//   res.json(savedPelicula);
-// });
-
-// app.delete('/movies/:id', async (req, res) => {
-//   const { id } = req.params;
-//   await deleteMovie(id);
-//   res.json({ msg: 'deleted' });
 // });
 
 app.post('/auth/register', async (req, res) => {
