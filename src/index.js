@@ -1,26 +1,19 @@
 require('dotenv').config();
 const express = require('express');
-const {
-  Sequelize, DataTypes, Model,
-} = require('sequelize');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Pelicula = require('./module/pelicula/model/pelicula');
 const Personaje = require('./module/personaje/model/personaje');
 const Genero = require('./genero');
-// const PeliculaPersonaje = require('./module/personaje/model/peliculaPersonaje');
 const Usuario = require('./usuario');
 
 const app = express();
 
 const configureDI = require('./config/di');
 const { initPersonajeModule } = require('./module/personaje/module');
+const { initPeliculaModule } = require('./module/pelicula/module');
 
 const port = process.env.PORT || 8000;
-
-// const sequelize = new Sequelize(process.env.DATABASE_URL, {
-//   dialect: 'postgres',
-// });
 
 const getTokenFrom = (req) => {
   const auth = req.get('authorization');
@@ -43,6 +36,7 @@ const getTokenFrom = (req) => {
 app.use(express.json());
 const container = configureDI();
 initPersonajeModule(app, container);
+initPeliculaModule(app, container);
 
 // app.get('/characters', async (req, res) => {
 //   const token = getTokenFrom(req);
