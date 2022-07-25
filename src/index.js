@@ -43,57 +43,6 @@ const getTokenFrom = (req) => {
 app.use(express.json());
 const container = configureDI();
 initPersonajeModule(app, container);
-// ============= repository Pelicula functions ===============
-
-async function getAllMovies() {
-  const peliculas = await Pelicula.findAll({
-    attributes: ['imagen', 'titulo', 'fechaCreacion'],
-  });
-  return peliculas;
-}
-
-async function getFilteredMovies(query) {
-  const options = {
-    where: {},
-  };
-  if (query.name) {
-    options.where.titulo = query.name;
-  }
-  if (query.genre) {
-    options.where.fk_genero = query.genre;
-  }
-  if (query.order) {
-    options.order = [['fecha_creacion', query.order]];
-  }
-  const filteredMovies = await Pelicula.findAll(options);
-  return filteredMovies;
-}
-
-async function getMovieById(id) {
-  const pelicula = await Pelicula.findByPk(id, {
-    include: {
-      model: Personaje,
-      as: 'personajes',
-      through: 'peliculas_personajes',
-    },
-  });
-  return pelicula;
-}
-
-async function saveMovie(data) {
-  const buildOptions = {
-    isNewRecord: !data.id,
-  };
-  let peliculaModel;
-
-  peliculaModel = Pelicula.build(data, buildOptions);
-  peliculaModel = await peliculaModel.save();
-  return peliculaModel;
-}
-
-async function deleteMovie(id) {
-  await Pelicula.destroy({ where: { id } });
-}
 
 // app.get('/characters', async (req, res) => {
 //   const token = getTokenFrom(req);
