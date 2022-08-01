@@ -3,13 +3,14 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Genero = require('./genero');
-const Usuario = require('./usuario');
+const Usuario = require('./module/management/model/usuario');
 
 const app = express();
 
 const configureDI = require('./config/di');
 const { initPersonajeModule } = require('./module/personaje/module');
 const { initPeliculaModule } = require('./module/pelicula/module');
+const { initManagementModule } = require('./module/management/module');
 
 const port = process.env.PORT || 8000;
 
@@ -30,6 +31,7 @@ app.use(express.json());
 const container = configureDI();
 initPersonajeModule(app, container);
 initPeliculaModule(app, container);
+initManagementModule(app, container);
 
 // app.get('/characters', async (req, res) => {
 //   const token = getTokenFrom(req);
@@ -60,27 +62,27 @@ initPeliculaModule(app, container);
 //   return res.status(200).json(personajes);
 // });
 
-app.post('/auth/register', async (req, res) => {
-  const { username, password } = req.body;
-  const existingUser = await Usuario.findOne({
-    where: {
-      username,
-    },
-  });
-  if (existingUser) {
-    return res.status(400).json({
-      error: 'username must be unique',
-    });
-  }
-  const saltRounds = 10;
-  const passwordHash = await bcrypt.hash(password, saltRounds);
-  const user = Usuario.build({
-    username,
-    passwordHash,
-  });
-  const savedUser = await user.save();
-  return res.status(201).json(savedUser);
-});
+// app.post('/auth/register', async (req, res) => {
+//   const { username, password } = req.body;
+//   const existingUser = await Usuario.findOne({
+//     where: {
+//       username,
+//     },
+//   });
+//   if (existingUser) {
+//     return res.status(400).json({
+//       error: 'username must be unique',
+//     });
+//   }
+//   const saltRounds = 10;
+//   const passwordHash = await bcrypt.hash(password, saltRounds);
+//   const user = Usuario.build({
+//     username,
+//     passwordHash,
+//   });
+//   const savedUser = await user.save();
+//   return res.status(201).json(savedUser);
+// });
 
 app.post('/auth/login', async (req, res) => {
   const { username, password } = req.body;

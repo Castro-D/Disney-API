@@ -20,6 +20,13 @@ const {
   PeliculaModel,
 } = require('../module/pelicula/module');
 
+const {
+  ManagementController,
+  ManagementService,
+  ManagementRepository,
+  UserModel,
+} = require('../module/management/module');
+
 function configureSequelizeDatabase() {
   return new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
@@ -42,6 +49,10 @@ function configurePeliculaPersonajeModel(container) {
 
 function configurePeliculaModel(container) {
   return PeliculaModel.setup(container.get('Sequelize'));
+}
+
+function configureUserModel(container) {
+  return UserModel.setup(container.get('Sequelize'));
 }
 
 function addPeliculaModuleDefinitions(container) {
@@ -70,6 +81,17 @@ function addPersonajeModuleDefinitions(container) {
   });
 }
 
+function addManagementModuleDefinitions(container) {
+  container.add({
+    ManagementController: object(ManagementController).construct(use('ManagementService')),
+    ManagementService: object(ManagementService).construct(use('ManagementRepository')),
+    ManagementRepository: object(ManagementRepository).construct(
+      use('UserModel'),
+    ),
+    UserModel: factory(configureUserModel),
+  });
+}
+
 function setupAssociations(container) {
   const personajeModel = container.get('PersonajeModel');
   const peliculaModel = container.get('PeliculaModel');
@@ -83,6 +105,7 @@ module.exports = function configureDI() {
   addCommonDefinitions(container);
   addPersonajeModuleDefinitions(container);
   addPeliculaModuleDefinitions(container);
+  addManagementModuleDefinitions(container);
   setupAssociations(container);
   return container;
 };
