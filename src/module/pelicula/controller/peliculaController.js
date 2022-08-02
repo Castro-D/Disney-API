@@ -1,3 +1,6 @@
+const { getTokenFrom } = require('../../management/utils/getToken');
+const { verifyToken } = require('../../management/utils/verifyToken');
+
 module.exports = class PeliculaController {
   /**
    * @param {import('../service/peliculaService')} peliculaService
@@ -9,11 +12,26 @@ module.exports = class PeliculaController {
   configureRoutes(app) {
     const ROUTE = '/movies';
 
-    app.get(`${ROUTE}`, this.getAll.bind(this));
-    app.get(`${ROUTE}/:id`, this.getMovie.bind(this));
-    app.post(`${ROUTE}`, this.create.bind(this));
-    app.put(`${ROUTE}/:id`, this.edit.bind(this));
-    app.delete(`${ROUTE}/:id`, this.remove.bind(this));
+    app.get(`${ROUTE}`, this.auth.bind(this), this.getAll.bind(this));
+    app.get(`${ROUTE}/:id`, this.auth.bind(this), this.getMovie.bind(this));
+    app.post(`${ROUTE}`, this.auth.bind(this), this.create.bind(this));
+    app.put(`${ROUTE}/:id`, this.auth.bind(this), this.edit.bind(this));
+    app.delete(`${ROUTE}/:id`, this.auth.bind(this), this.remove.bind(this));
+  }
+
+  async auth(req, res, next) {
+    const token = getTokenFrom(req);
+    if (!token) {
+      return res.status(401).json({ error: 'token missing or invalid' });
+    }
+
+    const decodedToken = verifyToken(token);
+    if (!decodedToken.id) {
+      return res.status(401).json({
+        error: 'token missing or invalid',
+      });
+    }
+    return next();
   }
 
   async getAll(req, res) {
