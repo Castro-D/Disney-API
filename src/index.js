@@ -1,9 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const Genero = require('./genero');
-const Usuario = require('./module/management/model/usuario');
+// const bcrypt = require('bcrypt');
+// const Genero = require('./module/management/model/genero');
+// const Usuario = require('./module/management/model/usuario');
 
 const app = express();
 
@@ -61,51 +61,6 @@ initManagementModule(app, container);
 //   const personajes = await getAll();
 //   return res.status(200).json(personajes);
 // });
-
-// app.post('/auth/register', async (req, res) => {
-//   const { username, password } = req.body;
-//   const existingUser = await Usuario.findOne({
-//     where: {
-//       username,
-//     },
-//   });
-//   if (existingUser) {
-//     return res.status(400).json({
-//       error: 'username must be unique',
-//     });
-//   }
-//   const saltRounds = 10;
-//   const passwordHash = await bcrypt.hash(password, saltRounds);
-//   const user = Usuario.build({
-//     username,
-//     passwordHash,
-//   });
-//   const savedUser = await user.save();
-//   return res.status(201).json(savedUser);
-// });
-
-app.post('/auth/login', async (req, res) => {
-  const { username, password } = req.body;
-  const user = await Usuario.findOne({
-    where: {
-      username,
-    },
-  });
-  const passwordCorrect = user === null
-    ? false
-    : await bcrypt.compare(password, user.passwordHash);
-  if (!(user && passwordCorrect)) {
-    return res.status(401).json({
-      error: 'invalid username',
-    });
-  }
-  const userForToken = {
-    username: user.username,
-    id: user.id,
-  };
-  const token = jwt.sign(userForToken, process.env.SECRET, { expiresIn: 60 * 60 });
-  return res.status(200).send({ token, username });
-});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

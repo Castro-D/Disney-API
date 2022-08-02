@@ -25,6 +25,7 @@ const {
   ManagementService,
   ManagementRepository,
   UserModel,
+  GeneroModel,
 } = require('../module/management/module');
 
 function configureSequelizeDatabase() {
@@ -53,6 +54,10 @@ function configurePeliculaModel(container) {
 
 function configureUserModel(container) {
   return UserModel.setup(container.get('Sequelize'));
+}
+
+function configureGeneroModel(container) {
+  return GeneroModel.setup(container.get('Sequelize'));
 }
 
 function addPeliculaModuleDefinitions(container) {
@@ -89,15 +94,18 @@ function addManagementModuleDefinitions(container) {
       use('UserModel'),
     ),
     UserModel: factory(configureUserModel),
+    GeneroModel: factory(configureGeneroModel),
   });
 }
 
 function setupAssociations(container) {
   const personajeModel = container.get('PersonajeModel');
   const peliculaModel = container.get('PeliculaModel');
+  const generoModel = container.get('GeneroModel');
 
   personajeModel.setupAssociation(peliculaModel);
   peliculaModel.setupAssociation(personajeModel);
+  generoModel.setupAssociation(peliculaModel);
 }
 
 module.exports = function configureDI() {
