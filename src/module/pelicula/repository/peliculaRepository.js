@@ -1,3 +1,5 @@
+const { fromModelToEntity } = require('../mapper/peliculaMapper');
+
 module.exports = class PeliculaRepository {
   /**
    * @param {import('../model/pelicula')} peliculaModel
@@ -12,7 +14,7 @@ module.exports = class PeliculaRepository {
     const peliculas = await this.peliculaModel.findAll({
       attributes: ['imagen', 'titulo', 'fechaCreacion'],
     });
-    return peliculas;
+    return peliculas.map((pelicula) => fromModelToEntity(pelicula));
   }
 
   async getFilteredMovies(query) {
@@ -29,7 +31,7 @@ module.exports = class PeliculaRepository {
       options.order = [['fecha_creacion', query.order]];
     }
     const filteredMovies = await this.peliculaModel.findAll(options);
-    return filteredMovies;
+    return filteredMovies.map((movie) => fromModelToEntity(movie));
   }
 
   async getMovieById(id) {
@@ -40,7 +42,7 @@ module.exports = class PeliculaRepository {
         through: 'peliculas_personajes',
       },
     });
-    return pelicula;
+    return fromModelToEntity(pelicula);
   }
 
   async saveMovie(data) {
@@ -48,10 +50,9 @@ module.exports = class PeliculaRepository {
       isNewRecord: !data.id,
     };
     let peliculaModel;
-
     peliculaModel = this.peliculaModel.build(data, buildOptions);
     peliculaModel = await peliculaModel.save();
-    return peliculaModel;
+    return fromModelToEntity(peliculaModel);
   }
 
   async deleteMovie(id) {
