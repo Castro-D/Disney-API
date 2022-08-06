@@ -1,5 +1,6 @@
 const { getTokenFrom } = require('../../management/utils/getToken');
 const { verifyToken } = require('../../management/utils/verifyToken');
+const { fromDataToEntity } = require('../mapper/personajeMapper');
 
 module.exports = class PersonajeController {
   /**
@@ -70,8 +71,8 @@ module.exports = class PersonajeController {
 
   async create(req, res) {
     try {
-      const personaje = req.body;
-      const { peliculas } = personaje;
+      const personaje = fromDataToEntity(req.body);
+      const { peliculas } = req.body;
       const newPersonaje = await this.personajeService.save(personaje);
       if (peliculas) {
         await this.personajeService.saveCharactersMovies(peliculas, newPersonaje);

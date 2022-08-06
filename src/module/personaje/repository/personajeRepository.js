@@ -1,3 +1,5 @@
+const { fromModelToEntity } = require('../mapper/personajeMapper');
+
 module.exports = class PersonajeRepository {
   /**
    * @param {import('../model/personaje')} personajeModel
@@ -14,7 +16,7 @@ module.exports = class PersonajeRepository {
     const personajes = await this.personajeModel.findAll({
       attributes: ['id', 'imagen', 'nombre'],
     });
-    return personajes;
+    return personajes.map((personaje) => fromModelToEntity(personaje));
   }
 
   async getFilteredCharacters(query, pelicula = null) {
@@ -29,7 +31,7 @@ module.exports = class PersonajeRepository {
           },
         },
       });
-      return personajes;
+      return personajes.map((personaje) => fromModelToEntity(personaje));
     }
     const result = await this.personajeModel.findAll({
       where: query,
@@ -45,7 +47,7 @@ module.exports = class PersonajeRepository {
         through: 'peliculas_personajes',
       },
     });
-    return personaje;
+    return fromModelToEntity(personaje);
   }
 
   async save(data) {
