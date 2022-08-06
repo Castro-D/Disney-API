@@ -26,7 +26,7 @@ module.exports = class ManagementController {
       }
       const saltRounds = 10;
       const passwordHash = await getPass(password, saltRounds);
-      const user = this.managementService.save(username, passwordHash);
+      const user = await this.managementService.save(username, passwordHash);
       return res.status(201).json(user);
     } catch (e) {
       return res.status(400).json({ message: `${e.message}` });
