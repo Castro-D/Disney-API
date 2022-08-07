@@ -28,22 +28,21 @@
                   "description": "User object",
                   "required": true,
                   "schema": {
-                        "type": "object",
-                        "properties": {
-                            "data" : {
-                                "type": "object",
-                                "properties": {
-                                  "username": {
-                                    "type": "string"
-                                  },
-                                  "password": {
-                                    "type": "string"
-                                  }
-                                  
-                                }
-                            } 
-                        }
+                    "type": "object",
+                    "properties": {
+                        
+                            
+                              "username": {
+                                "type": "string"
+                              },
+                              "password": {
+                                "type": "string"
+                              }
+                              
+                            
+                        
                     }
+                }
               }
           ],
           "responses": {
