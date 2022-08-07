@@ -1,4 +1,4 @@
-const Usuario = require('../../usuario');
+const Usuario = require('../../module/management/model/usuario');
 
 module.exports = {
   async up(queryInterface, Sequelize) {

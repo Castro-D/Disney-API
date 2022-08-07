@@ -1,7 +1,7 @@
-const Pelicula = require('../../pelicula');
-const Genero = require('../../genero');
-const Personaje = require('../../personaje');
-const PeliculaPersonaje = require('../../peliculaPersonaje');
+const Pelicula = require('../../module/pelicula/model/pelicula');
+const Genero = require('../../module/management/model/genero');
+const Personaje = require('../../module/personaje/model/personaje');
+const PeliculaPersonaje = require('../../module/personaje/model/peliculaPersonaje');
 
 module.exports = {
   async up(queryInterface, Sequelize) {
