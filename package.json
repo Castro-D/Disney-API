@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node ./src/index.js",
     "dev:express": "nodemon ./src/index.js",
     "migrations": "sequelize-cli db:migrate --config=./src/cli/config.js --migrations-path=./src/cli/migrations --env=development",
     "seed": "npx sequelize-cli db:seed:all --config=./src/cli/config.js --seeders-path=./src/cli/seeders --env=development",
