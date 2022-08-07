@@ -10,8 +10,8 @@
           "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
       }
   },
-  "schemes": ["http"],
-  "host": "localhost:8000",
+  "schemes": ["http", "https"],
+  "host": "safe-thicket-13587.herokuapp.com",
   "basePath": "/",
   "paths" : {
       "/auth/register" : {
