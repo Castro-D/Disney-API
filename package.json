@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev:express": "nodemon ./src/index.js",
-    "migrations": "sequelize-cli db:migrate --config=./src/cli/config.js --migrations-path=./src/cli/migrations --env=development"
+    "migrations": "sequelize-cli db:migrate --config=./src/cli/config.js --migrations-path=./src/cli/migrations --env=development",
+    "seed": "npx sequelize-cli db:seed:all --config=./src/cli/config.js --seeders-path=./src/cli/seeders --env=development",
+    "seed:undo": "npx sequelize-cli db:seed:undo --config=./src/cli/config.js --seeders-path=./src/cli/seeders --env=development"
   },
   "repository": {
     "type": "git",
