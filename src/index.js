@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
+const cors = require('cors');
 const swaggerDocument = require('../swagger.json');
 
 const app = express();
@@ -11,7 +12,7 @@ const { initPeliculaModule } = require('./module/pelicula/module');
 const { initManagementModule } = require('./module/management/module');
 
 const port = process.env.PORT || 8000;
-
+app.use(cors());
 app.use(express.json());
 const container = configureDI();
 initPersonajeModule(app, container);
