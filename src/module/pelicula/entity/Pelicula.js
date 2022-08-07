@@ -14,6 +14,7 @@ module.exports = class Pelicula {
     fechaCreacion,
     calificacion,
     fk_genero,
+    personajes,
   }) {
     this.id = id;
     this.imagen = imagen;
@@ -21,5 +22,6 @@ module.exports = class Pelicula {
     this.fechaCreacion = fechaCreacion;
     this.calificacion = calificacion;
     this.fk_genero = fk_genero;
+    this.personajes = personajes;
   }
 };

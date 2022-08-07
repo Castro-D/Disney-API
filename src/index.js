@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../swagger.json');
 
 const app = express();
 
@@ -15,6 +17,8 @@ const container = configureDI();
 initPersonajeModule(app, container);
 initPeliculaModule(app, container);
 initManagementModule(app, container);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

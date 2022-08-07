@@ -1,0 +1,847 @@
+
+{
+  "swagger": "2.0",
+  "info": {
+      "description": "Disney characters and movies CRUD",
+      "version": "1.0.0",
+      "title": "Disney API",
+      "license": {
+          "name": "Apache 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      }
+  },
+  "schemes": ["http"],
+  "host": "localhost:8000",
+  "basePath": "/",
+  "paths" : {
+      "/auth/register" : {
+        "post" : {
+          "summary" : "Create a user",
+          "tags": ["Auth"],
+          "description": "Register a user",
+          "produces": ["application/json"],
+          "consumes": ["application/json"],
+          "parameters": [
+              {
+                  "in": "body",
+                  "name": "body",
+                  "description": "User object",
+                  "required": true,
+                  "schema": {
+                        "type": "object",
+                        "properties": {
+                            "data" : {
+                                "type": "object",
+                                "properties": {
+                                  "username": {
+                                    "type": "string"
+                                  },
+                                  "password": {
+                                    "type": "string"
+                                  }
+                                  
+                                }
+                            } 
+                        }
+                    }
+              }
+          ],
+          "responses": {
+              "200": {
+                  "description": "successful operation",
+                  "schema": {
+                    "properties": {
+                      "data" : {
+                          "type": "object",
+                          "$ref": "#/definitions/userResponse"
+                      } 
+                  }
+                  }
+              },
+              "400": {
+                  "description": "Invalid status value",
+                  "schema": {
+                      "$ref": "#/definitions/InvalidResponse"
+                  }
+              }
+          }
+        }
+        
+      },
+      "/auth/login" : {
+        "post" : {
+          "summary" : "Login",
+          "tags": ["Auth"],
+          "description": "Login",
+          "produces": ["application/json"],
+          "consumes": ["application/json"],
+          "parameters": [
+              {
+                  "in": "body",
+                  "name": "body",
+                  "description": "User object",
+                  "required": true,
+                  "schema": {
+                        "type": "object",
+                        "properties": {
+                            
+                                
+                                  "username": {
+                                    "type": "string"
+                                  },
+                                  "password": {
+                                    "type": "string"
+                                  }
+                                  
+                                
+                            
+                        }
+                    }
+              }
+          ],
+          "responses": {
+              "200": {
+                  "description": "successful operation",
+                  "schema": {
+                    "properties": {
+                      "data" : {
+                          "type": "object",
+                          "$ref": "#/definitions/loginResponse"
+                      } 
+                  }
+                  }
+              },
+              "401": {
+                  "description": "Invalid status value",
+                  "schema": {
+                      "$ref": "#/definitions/InvalidResponse"
+                  }
+              }
+          }
+        }
+        
+      },
+      "/movies" : {
+        "get" : {
+            "summary" : "Get all the movies",
+            "tags": ["movies"],
+            "description": "Get all movies",
+            "produces": ["application/json"],
+            "parameters": [
+              {
+                "in": "query",
+                "name": "name",
+                "description": "Movie title",
+                "required": false,
+                "type": "string"
+                
+              },
+              {
+                "in": "query",
+                "name": "genre",
+                "description": "Movie genre ",
+                "required": false,
+                "type": "integer"
+              },
+              {
+                "in": "query",
+                "name": "order",
+                "description": "order: ASC | DESC",
+                "required": false
+              }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful operation",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/moviesResponse"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        },
+        "post" : {
+          "summary" : "Create a movie",
+          "tags": ["movies"],
+          "description": "Saves movies to db, please keep in mind fk_genero can only be 1, 2, 3, 4, 5",
+          "produces": ["application/json"],
+          "consumes": ["application/json"],
+          "parameters": [
+              {
+                  "in": "body",
+                  "name": "body",
+                  "description": "movie object",
+                  "required": true,
+                  "schema": {
+                      "type": "object",
+                      "properties": {
+                        "imagen": {
+                          "type": "string"
+                        },
+                        "titulo": {
+                          "type": "string"
+                        },
+                        "fechaCreacion": {
+                          "type": "string"
+                        },
+                        "calificacion": {
+                          "type": "integer"
+                        },
+                        "fk_genero": {
+                          "type": "integer"
+                        }
+                        
+                      }
+                  }
+              }
+          ],
+          "responses": {
+              "200": {
+                  "description": "successful operation",
+                  "schema": {
+                    "properties": {
+                      "data" : {
+                          "type": "object",
+                          "$ref": "#/definitions/movieResponse"
+                      } 
+                  }
+                  }
+              },
+              "400": {
+                  "description": "Invalid status value",
+                  "schema": {
+                      "$ref": "#/definitions/InvalidResponse"
+                  }
+              }
+          }
+        }
+    },
+    
+    "/movies/{id}" : {
+        "get" : {
+            "summary" : "Get movie",
+            "tags": ["movies"],
+            "description": "gets movie by id",
+            "produces": ["application/json"],
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "movie id that needs to be fetched",
+                    "required": true,
+                    "type": "integer"
+                }
+                
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful operation",
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                          "data" : {
+                              "type": "object",
+                              "properties": {
+                                "imagen": {
+                                  "type": "string"
+                                },
+                                "titulo": {
+                                  "type": "string"
+                                },
+                                "fechaCreacion": {
+                                  "type": "string"
+                                },
+                                "calificacion": {
+                                  "type": "integer"
+                                },
+                                "fk_genero": {
+                                  "type": "integer"
+                                },
+                                "personajes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "imagen": {
+                                        "type": "string"
+                                      },
+                                      "nombre": {
+                                        "type": "string"
+                                      },
+                                      "edad": {
+                                        "type": "integer"
+                                      },
+                                      "peso": {
+                                        "type": "integer"
+                                      },
+                                      "historia": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                          } 
+                      }
+                  }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        },
+        "put" : {
+          "summary" : "Update movie",
+          "tags": ["movies"],
+          "description": "Update the movies",
+          "produces": ["application/json"],
+          "parameters": [
+              {
+                  "name": "id",
+                  "in": "path",
+                  "description": "movie id that needs to be updated",
+                  "required": true,
+                  "type": "integer"
+              },
+              {
+                  "in": "body",
+                  "name": "body",
+                  "description": "movie object",
+                  "required": true,
+                  "schema": {
+                      "type": "object",
+                      "properties": {
+                        "imagen": {
+                          "type": "string"
+                        },
+                        "titulo": {
+                          "type": "string"
+                        },
+                        "fechaCreacion": {
+                          "type": "string"
+                        },
+                        "calificacion": {
+                          "type": "integer"
+                        },
+                        "fk_genero": {
+                          "type": "integer"
+                        }
+                      }
+                  }
+              }
+          ],
+          "responses": {
+              "200": {
+                  "description": "successful operation",
+                  "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        }
+                      }
+                  }
+              },
+              "400": {
+                  "description": "Invalid status value",
+                  "schema": {
+                      "$ref": "#/definitions/InvalidResponse"
+                  }
+              }
+          }
+      },
+      "delete" : {
+        "summary" : "Delete the movie",
+        "tags": ["movies"],
+        "description": "Delete the movie",
+        "produces": ["application/json"],
+        "parameters": [
+            {
+                "name": "id",
+                "in": "path",
+                "description": "movie id that needs to be deleted",
+                "required": true,
+                "type": "integer"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "successful operation",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "msg": {
+                          "type": "string"
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Invalid status value",
+                "schema": {
+                    "$ref": "#/definitions/InvalidResponse"
+                }
+            }
+        }
+      }
+    },
+    "/characters" : {
+      "get" : {
+          "summary" : "Get all the character",
+          "tags": ["Characters"],
+          "description": "Get all characters",
+          "produces": ["application/json"],
+          "parameters": [
+            {
+              "in": "query",
+              "name": "peliculas",
+              "description": "Movie id",
+              "required": false,
+              "type": "integer"
+              
+            },
+            {
+              "in": "query",
+              "name": "nombre",
+              "description": "character name ",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "in": "query",
+              "name": "edad",
+              "description": "characters age",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "in": "query",
+              "name": "peso",
+              "description": "characters weight",
+              "type": "integer",
+              "required": false
+            }
+          ],
+          "responses": {
+              "200": {
+                  "description": "successful operation",
+                  "schema": {
+                      "type": "array",
+                      "items": {
+                          "$ref": "#/definitions/charactersResponse"
+                      }
+                  }
+              },
+              "400": {
+                  "description": "Invalid status value",
+                  "schema": {
+                      "$ref": "#/definitions/InvalidResponse"
+                  }
+              }
+          }
+      },
+      "post" : {
+        "summary" : "Create a character",
+        "tags": ["Characters"],
+        "description": "Saves character to db, only specify existing movies, else create them first",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "parameters": [
+            {
+                "in": "body",
+                "name": "body",
+                "description": "character object",
+                "required": true,
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                      "imagen": {
+                        "type": "string"
+                      },
+                      "nombre": {
+                        "type": "string"
+                      },
+                      "edad": {
+                        "type": "integer"
+                      },
+                      "peso": {
+                        "type": "integer"
+                      },
+                      "historia": {
+                        "type": "string"
+                      },
+                      "peliculas": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "example": ["str1", "str2"]
+                      }
+                      
+                    }
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "successful operation",
+                "schema": {
+                  "properties": {
+                    "data" : {
+                        "type": "object",
+                        "$ref": "#/definitions/characterResponse"
+                    } 
+                }
+                }
+            },
+            "400": {
+                "description": "Invalid status value",
+                "schema": {
+                    "$ref": "#/definitions/InvalidResponse"
+                }
+            }
+        }
+      }
+  },
+  
+  "/characters/{id}" : {
+      "get" : {
+          "summary" : "Get character",
+          "tags": ["Characters"],
+          "description": "gets a character by id",
+          "produces": ["application/json"],
+          "parameters": [
+              {
+                  "name": "id",
+                  "in": "path",
+                  "description": "character id that needs to be fetched",
+                  "required": true,
+                  "type": "integer"
+              }
+              
+          ],
+          "responses": {
+              "200": {
+                  "description": "successful operation",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                        "data" : {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "imagen": {
+                                "type": "string"
+                              },
+                              "nombre": {
+                                "type": "string"
+                              },
+                              "edad": {
+                                "type": "integer"
+                              },
+                              "peso": {
+                                "type": "integer"
+                              },
+                              "historia": {
+                                "type": "string"
+                              },
+                              "peliculas": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "integer"
+                                    },
+                                    "imagen": {
+                                      "type": "string"
+                                    },
+                                    "titulo": {
+                                      "type": "string"
+                                    },
+                                    "fechaCreacion": {
+                                      "type": "string"
+                                    },
+                                    "calificacion": {
+                                      "type": "integer"
+                                    },
+                                    "fk_genero": {
+                                      "type": "integer"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                        } 
+                    }
+                }
+              },
+              "400": {
+                  "description": "Invalid status value",
+                  "schema": {
+                      "$ref": "#/definitions/InvalidResponse"
+                  }
+              }
+          }
+      },
+      "put" : {
+        "summary" : "Update character",
+        "tags": ["Characters"],
+        "description": "Update a character",
+        "produces": ["application/json"],
+        "parameters": [
+            {
+                "name": "id",
+                "in": "path",
+                "description": "movie id that needs to be updated",
+                "required": true,
+                "type": "integer"
+            },
+            {
+                "in": "body",
+                "name": "body",
+                "description": "movie object",
+
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                      "imagen": {
+                        "type": "string"
+                      },
+                      "nombre": {
+                        "type": "string"
+                      },
+                      "edad": {
+                        "type": "integer"
+                      },
+                      "peso": {
+                        "type": "integer"
+                      },
+                      "historia": {
+                        "type": "string"
+                      }
+                    }
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "successful operation",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "nombre": {
+                        "type": "string"
+                      }
+                    }
+                }
+            },
+            "400": {
+                "description": "Invalid status value",
+                "schema": {
+                    "$ref": "#/definitions/InvalidResponse"
+                }
+            }
+        }
+    },
+    "delete" : {
+      "summary" : "Delete a character",
+      "tags": ["Characters"],
+      "description": "Delete a character",
+      "produces": ["application/json"],
+      "parameters": [
+          {
+              "name": "id",
+              "in": "path",
+              "description": "character id that needs to be deleted",
+              "required": true,
+              "type": "integer"
+          }
+      ],
+      "responses": {
+          "200": {
+              "description": "successful operation",
+              "schema": {
+                  "type": "object",
+                  "properties": {
+                      "msg": {
+                        "type": "string"
+                      }
+                  }
+              }
+          },
+          "400": {
+              "description": "Invalid status value",
+              "schema": {
+                  "$ref": "#/definitions/InvalidResponse"
+              }
+          }
+      }
+    }
+  }
+  }, 
+  "definitions": {
+      "moviesResponse": {
+          "type": "object",
+          "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "imagen": {
+                "type": "string"
+              },
+              "titulo": {
+                "type": "string"
+              },
+              "fechaCreacion": {
+                "type": "string"
+              }
+          }
+      },
+      "userResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "passwordHash": {
+            "type": "string"
+          }
+        }
+      },
+      "loginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "movieResponse": {
+        "type": "object",
+        "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "imagen": {
+              "type": "string"
+            },
+            "titulo": {
+              "type": "string"
+            },
+            "fechaCreacion": {
+              "type": "string"
+            },
+            "calificacion": {
+              "type": "integer"
+            },
+            "fk_genero": {
+              "type": "integer"
+            }
+        }
+    },
+      "movie": {
+          "type": "object",
+          "properties": {
+            "imagen": {
+              "type": "string"
+            },
+            "titulo": {
+              "type": "string"
+            },
+            "fechaCreacion": {
+              "type": "string"
+            },
+            "calificacion": {
+              "type": "integer"
+            },
+            "fk_genero": {
+              "type": "integer"
+            }
+          }
+      },
+      "InvalidResponse": {
+          "type": "object",
+          "properties": {
+              "statusCode": {
+                  "type": "string"
+              },
+              "message": {
+                  "type": "string"
+              }
+          }
+
+      },
+      "charactersResponse": {
+        "type": "object",
+        "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "imagen": {
+              "type": "string"
+            },
+            "nombre": {
+              "type": "string"
+            }
+            
+        }
+      },
+      "characterResponse": {
+        "type": "object",
+        "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "imagen": {
+              "type": "string"
+            },
+            "nombre": {
+              "type": "string"
+            },
+            "edad": {
+              "type": "integer"
+            },
+            "peso": {
+              "type": "integer"
+            }
+            
+        }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "name": "Authorization",
+      "in": "header",
+      "type": "apiKey",
+      "description": "JWT Authorization header"
+    }
+  },
+  "security": [ { "bearerAuth": [] } ]
+   
+}
