@@ -17,7 +17,8 @@
 #### Install dependencies
 
 Run `npm install`
-Rename .env.dist to .env and add your credentials.
+
+Rename .env.dist to .env and add your secrets.
 
 #### Run the project
 1. `npm run dev:express` to run server
