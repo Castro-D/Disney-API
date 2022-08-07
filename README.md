@@ -1,5 +1,7 @@
 # Disney-API
 
+## Live demo: https://safe-thicket-13587.herokuapp.com/api-docs/
+
 ### Tech stack
 - **Nodejs** -- a JavaScript runtime built on Chrome's V8 JavaScript engine.
 - **Expressjs** -- a Fast, unopinionated, minimalist web framework for Node.js.
@@ -24,4 +26,3 @@ Rename .env.dist to .env and add your secrets.
 1. `npm run dev:express` to run server
 2. `npm run migrations` to run Sequelize migrations
 3. `npm run seed` to run seeders
-4. Swagger endpoint: /api-docs
