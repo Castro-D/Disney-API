@@ -29,12 +29,18 @@ const {
 } = require('../module/management/module');
 
 function configureSequelizeDatabase() {
+  if (process.env.NODE_ENV === 'development') {
+    return new Sequelize(process.env.DATABASE_URL, {
+      dialect: 'postgres',
+      logging: false,
+    });
+  }
   return new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     dialectOptions: {
       ssl: {
-        require: true, // This will help you. But you will see nwe error
-        rejectUnauthorized: false, // This line will fix new error
+        require: true,
+        rejectUnauthorized: false,
       },
     },
   });
