@@ -21,6 +21,6 @@ initManagementModule(app, container);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.listen(port, () => {
+module.exports = app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

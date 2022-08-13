@@ -8,7 +8,8 @@
     "dev:express": "nodemon ./src/index.js",
     "migrations": "sequelize-cli db:migrate --config=./src/cli/config.js --migrations-path=./src/cli/migrations --env=production",
     "seed": "npx sequelize-cli db:seed:all --config=./src/cli/config.js --seeders-path=./src/cli/seeders --env=production",
-    "seed:undo": "npx sequelize-cli db:seed:undo --config=./src/cli/config.js --seeders-path=./src/cli/seeders --env=production"
+    "seed:undo": "npx sequelize-cli db:seed:undo --config=./src/cli/config.js --seeders-path=./src/cli/seeders --env=production",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,12 @@
   },
   "homepage": "https://github.com/Castro-D/Disney-API#readme",
   "devDependencies": {
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
     "eslint": "^8.19.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
+    "mocha": "^10.0.0",
     "nodemon": "^2.0.18",
     "prettier": "2.7.1",
     "sequelize-cli": "^6.4.1"
