@@ -13,6 +13,8 @@
 - **Swagger** -- API documentation.
 - **Solid principles**
 - **Domain driven design** -- Anemic model.
+- **Mocha** -- Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser.
+- **Chai** -- Chai is a BDD / TDD assertion library for node and the browser.
 
 ### How to run this project
 
@@ -26,3 +28,4 @@ Rename .env.dist to .env and add your secrets.
 1. `npm run dev:express` to run server
 2. `npm run migrations` to run Sequelize migrations
 3. `npm run seed` to run seeders
+4. `npm test` to run tests
