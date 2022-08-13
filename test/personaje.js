@@ -13,7 +13,7 @@ const should = chai.should();
 
 chai.use(chaiHttp);
 
-describe('Movies', () => {
+describe('Characters', () => {
   let sequelize;
   let PersonajeModel;
   let PeliculaModel;
@@ -34,23 +34,16 @@ describe('Movies', () => {
 
     await sequelize.sync({ force: true });
 
-    const genero = {
-      nombre: 'genero',
-      imagen: 'asda',
-    };
-    const pelicula = {
+    const personaje = {
       imagen: 'asd',
-      titulo: 'chai',
-      fechaCreacion: '1991-10-23',
-      calificacion: 5,
-      fk_genero: 1,
+      nombre: 'pepe',
+      edad: 24,
+      peso: 44,
+      historia: 'asd',
     };
 
-    const savedGenero = GeneroModel.build(genero);
-    await savedGenero.save();
-
-    const savedPelicula = PeliculaModel.build(pelicula);
-    await savedPelicula.save();
+    const savedPersonaje = PersonajeModel.build(personaje);
+    await savedPersonaje.save();
 
     const user = {
       username: 'admin',
@@ -66,20 +59,19 @@ describe('Movies', () => {
 
   afterEach(async () => {
     await UsuarioModel.destroy({ truncate: true });
-    await GeneroModel.destroy({ truncate: true });
-    await PeliculaModel.destroy({ truncate: true });
+    await PersonajeModel.destroy({ truncate: true });
   });
 
-  describe('/GET movies', () => {
+  describe('/GET characters', () => {
     it('it should return unauthorized status when not logged in', (done) => {
       chai.request(server)
-        .get('/movies')
+        .get('/characters')
         .end((err, res) => {
           res.should.have.status(401);
           done();
         });
     });
-    it('it should Login, and get a movie', (done) => {
+    it('it should Login, and get a character', (done) => {
       chai.request(server)
         .post('/auth/login')
         .send({
@@ -89,41 +81,16 @@ describe('Movies', () => {
         .end((err, res) => {
           const { token } = res.body;
           chai.request(server)
-            .get('/movies/1')
+            .get('/characters/1')
             .set('Authorization', `bearer ${token}`)
             .end((err, response) => {
               response.should.have.status(200);
-              response.body.pelicula.should.be.a('object');
-              response.body.pelicula.should.have.property('imagen');
-              response.body.pelicula.should.have.property('titulo');
-              response.body.pelicula.should.have.property('fechaCreacion');
-              response.body.pelicula.should.have.property('calificacion');
-              response.body.pelicula.should.have.property('fk_genero');
-              done();
-            });
-        });
-    });
-    it('it should get all movies', (done) => {
-      chai.request(server)
-        .post('/auth/login')
-        .send({
-          username: 'admin',
-          password: 'admin',
-        })
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.have.property('token');
-          const { token } = res.body;
-          chai.request(server)
-            .get('/movies')
-            .set('Authorization', `bearer ${token}`)
-            .end((err, response) => {
-              response.should.have.status(200);
-              response.body.should.be.a('array');
-              response.body[0].should.be.a('object');
-              response.body[0].should.have.property('imagen');
-              response.body[0].should.have.property('titulo');
-              response.body[0].should.have.property('fechaCreacion');
+              response.body.should.be.a('object');
+              response.body.data.should.have.property('imagen');
+              response.body.data.should.have.property('nombre');
+              response.body.data.should.have.property('edad');
+              response.body.data.should.have.property('peso');
+              response.body.data.should.have.property('historia');
               done();
             });
         });
@@ -140,7 +107,7 @@ describe('Movies', () => {
           res.body.should.have.property('token');
           const { token } = res.body;
           chai.request(server)
-            .get('/movies/9999')
+            .get('/characters/9999')
             .set('Authorization', `bearer ${token}`)
             .end((err, response) => {
               response.should.have.status(400);
@@ -149,8 +116,32 @@ describe('Movies', () => {
             });
         });
     });
+    it('it should get all characters', (done) => {
+      chai.request(server)
+        .post('/auth/login')
+        .send({
+          username: 'admin',
+          password: 'admin',
+        })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.have.property('token');
+          const { token } = res.body;
+          chai.request(server)
+            .get('/characters')
+            .set('Authorization', `bearer ${token}`)
+            .end((err, response) => {
+              response.should.have.status(200);
+              response.body.should.be.a('array');
+              response.body[0].should.be.a('object');
+              response.body[0].should.have.property('imagen');
+              response.body[0].should.have.property('nombre');
+              done();
+            });
+        });
+    });
   });
-  describe('/POST movies', () => {
+  describe('/POST characters', () => {
     it('it should return unauthorized status when not logged in', (done) => {
       chai.request(server)
         .post('/movies')
@@ -159,7 +150,7 @@ describe('Movies', () => {
           done();
         });
     });
-    it('it should Login, create a movie when properties are correct', (done) => {
+    it('it should Login, create a character when properties are correct', (done) => {
       chai.request(server)
         .post('/auth/login')
         .send({
@@ -169,54 +160,28 @@ describe('Movies', () => {
         .end((err, res) => {
           const { token } = res.body;
           chai.request(server)
-            .post('/movies')
+            .post('/characters')
             .set('Authorization', `bearer ${token}`)
             .send({
               imagen: 'asdas',
-              titulo: 'mocha 2',
-              fechaCreacion: '1991-10-26',
-              calificacion: 3,
-              fk_genero: 1,
+              nombre: 'mocha 3',
+              edad: 21,
+              peso: 30,
+              historia: 'asdsa',
             })
             .end((err, response) => {
               response.should.have.status(200);
               response.body.should.be.a('object');
               response.body.should.have.property('imagen');
-              response.body.should.have.property('titulo');
-              response.body.should.have.property('fechaCreacion');
-              response.body.should.have.property('calificacion');
-              response.body.should.have.property('fk_genero');
+              response.body.should.have.property('nombre');
+              response.body.should.have.property('edad');
+              response.body.should.have.property('peso');
+              response.body.should.have.property('historia');
               done();
             });
         });
     });
-    it('it should return 400 code when calificacion is not between 1 to 5', (done) => {
-      chai.request(server)
-        .post('/auth/login')
-        .send({
-          username: 'admin',
-          password: 'admin',
-        })
-        .end((err, res) => {
-          const { token } = res.body;
-          chai.request(server)
-            .post('/movies')
-            .set('Authorization', `bearer ${token}`)
-            .send({
-              imagen: 'asdas',
-              titulo: 'mocha 2',
-              fechaCreacion: '1991-10-26',
-              calificacion: 7,
-              fk_genero: 1,
-            })
-            .end((err, response) => {
-              response.should.have.status(400);
-              response.body.should.be.a('object');
-              response.body.message.should.equal('Validation error: Validation max on calificacion failed');
-              done();
-            });
-        });
-    });
+
     it('it should throw error when a field is missing', (done) => {
       chai.request(server)
         .post('/auth/login')
@@ -227,12 +192,12 @@ describe('Movies', () => {
         .end((err, res) => {
           const { token } = res.body;
           chai.request(server)
-            .post('/movies')
+            .post('/characters')
             .set('Authorization', `bearer ${token}`)
             .send({
               imagen: 'asdas',
-              titulo: 'mocha 2',
-              fechaCreacion: '1991-10-26',
+              nombre: 'mocha 2',
+              edad: 12,
             })
             .end((err, response) => {
               response.should.have.status(400);
@@ -252,7 +217,7 @@ describe('Movies', () => {
           done();
         });
     });
-    it('it should Login and modify an existing movie', (done) => {
+    it('it should Login and modify an existing character', (done) => {
       chai.request(server)
         .post('/auth/login')
         .send({
@@ -262,22 +227,21 @@ describe('Movies', () => {
         .end((err, res) => {
           const { token } = res.body;
           chai.request(server)
-            .put('/movies/1')
+            .put('/characters/1')
             .set('Authorization', `bearer ${token}`)
             .send({
-              imagen: 'asdas',
-              titulo: 'updated!',
+              nombre: 'updated!',
             })
             .end((err, response) => {
               response.should.have.status(200);
               response.body.should.be.a('object');
-              response.body.titulo.should.equal('updated!');
+              response.body.nombre.should.equal('updated!');
               done();
             });
         });
     });
   });
-  describe('/DELETE movies', () => {
+  describe('/DELETE characters', () => {
     it('it should return unauthorized status when not logged in', (done) => {
       chai.request(server)
         .post('/movies')
@@ -286,7 +250,7 @@ describe('Movies', () => {
           done();
         });
     });
-    it('it should delete a movie', (done) => {
+    it('it should delete a character', (done) => {
       chai.request(server)
         .post('/auth/login')
         .send({
@@ -296,12 +260,11 @@ describe('Movies', () => {
         .end((err, res) => {
           const { token } = res.body;
           chai.request(server)
-            .delete('/movies/1')
+            .delete('/characters/1')
             .set('Authorization', `bearer ${token}`)
             .end((err, response) => {
               response.should.have.status(200);
               response.body.should.be.a('object');
-              response.body.msg.should.equal('deleted');
               done();
             });
         });
