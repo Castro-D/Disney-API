@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  app:
+    tty: true
+    image: node:12-alpine
+    depends_on:
+      - db
+    command: sh -c "npm install && npm run migrations && npm run start"
+    ports:
+      - 8000:8000
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      DATABASE_URL: postgresql://postgres:admin@db:5432/disney_db
+      SECRET: qwerasdfzxcvtryuhjklbvnmfghjsdfgrety
+      NODE_ENV: development
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: disney_db
