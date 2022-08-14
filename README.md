@@ -15,6 +15,7 @@
 - **Domain driven design** -- Anemic model.
 - **Mocha** -- Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser.
 - **Chai** -- Chai is a BDD / TDD assertion library for node and the browser.
+- **Docker** -- a set of platform as a service products that use OS-level virtualization to deliver software in packages called containers.
 
 ### How to run this project
 
@@ -29,3 +30,10 @@ Rename .env.dist to .env and add your secrets.
 2. `npm run migrations` to run Sequelize migrations
 3. `npm run seed` to run seeders
 4. `npm test` to run tests
+
+#### Or with docker:
+1. make sure you have Docker installed then run the following command on your terminal:
+
+`docker-compose up`
+
+then go to: http://localhost:8000
